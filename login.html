@@ -1,0 +1,110 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body id="div1">
+	<div class="login-page">
+		<img id="mainLogo" src="NetFoodLogo.png" alt="Net Food Logo">
+	  <div class="form">
+	    <form class="register-form">
+	      <input id="registerID" type="text" placeholder="username"/>
+	      <input id="registerPW" type="password" placeholder="password"/>
+	      <button type='button' id="register" >CREATE</button>
+	      <p class="message">Already registered? <a href="#">Sign In</a></p>
+	    </form>
+	    <form class="login-form">
+	      <input id="loginID" type="text" placeholder="username"/>
+	      <input id="loginPW" type="password" placeholder="password"/>
+	      <button type='button' id="login" >LOGIN</button>
+	      <p class="message">Not registered? <a href="#">Create an account</a></p>
+	    </form>
+	  </div>
+	</div>
+</body>
+<script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+<script>
+$('.message a').click(function(){
+   $('form').animate({height: "toggle", opacity: "toggle"}, "fast");
+});
+
+$("#login").on("click", function(){ 
+	
+	object = {"username": document.getElementById("loginID").value, "password": document.getElementById("loginPW").value}
+	
+	
+	
+	$.ajax({
+		type: 'POST',
+				url: 'http://localhost:3000/authenticate',
+				data: object,
+				success: function(data) {
+				
+						
+						if (data == "Valid") {
+							$("#login").text("Valid")
+							$.ajax({
+								type: 'GET',
+								url: 'http://localhost:3000/home',
+								success: function(data2){
+									window.location.replace('http://localhost:3000/home')
+
+								}
+							})
+						
+							
+						}
+						
+						else {
+							$("#login").text("Invalid, please try again")
+							
+						}
+						
+                }
+              
+            });
+	
+	
+});
+
+
+$("#register").on("click", function() {
+	object = document.getElementById("registerID").value;
+	account_object = {"username": document.getElementById("registerID").value, "password": document.getElementById("registerPW").value}
+	user_url = 'logins/' + object;
+	
+	
+	$.ajax({
+		type: 'GET',
+				url: user_url,
+				success: function(data) {
+					
+					if (data == "Available"){
+						
+						if (document.getElementById("registerPW").value == ""){
+							$("#register").text("Please enter a password");
+						}
+						else{
+							$("#register").text("Account Created");
+							
+							$.ajax({
+								type: "POST",
+								url: 'http://localhost:3000/logins',
+								data: account_object,
+								success: function(data){
+								
+								}
+								
+							});
+						}
+					}
+					else {
+						$("#register").text("Taken, choose another name");
+					}
+				}
+	});
+	
+});
+</script>
+</html>

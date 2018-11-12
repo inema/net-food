@@ -1,0 +1,492 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body id="div1">
+	<div id="logout">
+		<img id='logout' src='logout.png' alt='Delete' style='height:30; cursor: pointer;'>
+	</div>
+	<div id="home">
+	
+	  <img id="mainLogo" src="NetFoodLogo.png" alt="Net Food Logo">
+
+	  <div id="form">
+		<input type="text" id="search" name="firstname" placeholder="Enter an ingredient...">
+		<input type="image" id="submit" name="submit" src="submit.png" alt="Submit"/>
+	  </div>
+	  <img id="or" src="or.png" alt="or">
+	  <input id="new_recipe" type="button" name="submit" value="Create new recipe" alt="NewRecipe"/>
+	</div>
+	
+	<div id="new-recipe">
+		<img id="mainLogo" src="NetFoodLogo.png" alt="Net Food Logo">
+		<div class="new-recipe-div">
+	    <form class="new-recipe-form">
+	      Recipe name: <input id='Rname' type="text" name="name"/>
+		  Recipe URL: <input id='Rrecipe' type="text" name="recipe"/>
+		  Photo URL: <input  id='Rphoto'type="text" name="photo"/>
+		  Ingredients (separated by commas): <input id='Ringredients' type="text" name="ingredients"/>
+		  Rating : <select id='Rrating' name="rating">
+			  <option value="5">5</option>
+			  <option value="4">4</option>
+			  <option value="3">3</option>
+			  <option value="2">2</option>
+			  <option value="1">1</option>
+			</select></br></br>
+		  Cook time (minutes): <input id='Rtime' type="text" name="time"/>
+	      <button type="button" id="createb" style="max-width:100px;display:block;margin:auto;">CREATE</button>
+	    </form>
+		</div>
+	</div>
+	
+	<div id="edit-recipe">
+		<img id="mainLogo" src="NetFoodLogo.png" alt="Net Food Logo">
+
+		<div class="new-recipe-div">
+	    <form class="new-recipe-form">
+	      Recipe name: <input id='Rname2' type="text" name="name"/>
+		  Recipe URL: <input id='Rrecipe2' type="text" name="recipe"/>
+		  Photo URL: <input  id='Rphoto2'type="text" name="photo"/>
+		  Ingredients (separated by commas): <input id='Ringredients2' type="text" name="ingredients"/>
+		  Rating : <select id='Rrating2' name="rating">
+			  <option value="5">5</option>
+			  <option value="4">4</option>
+			  <option value="3">3</option>
+			  <option value="2">2</option>
+			  <option value="1">1</option>
+			</select></br></br>
+		  Cook time (minutes): <input id='Rtime2' type="text" name="time"/>
+	      <button type="button" id="editb" style="max-width:100px;display:block;margin:auto;">DONE</button>
+		  <div id="recipeId" style="display:none;"></div>
+	    </form>
+		</div>
+	</div>
+	
+    <div class="container">
+        <div class="item">
+            <img id="miniLogo" src="NetFoodLogoMini.png" alt="Net Food Logo">
+			<h4> Click on ingredients to add</h4>
+        </div>
+		
+        
+		<div class="item" style="margin-top:10px;">
+            <h2 class="header-wrapper" id="list"></h2> 
+			<div class='button-wrapper'>
+				<input id="search2" type="button" value="Search" />
+			</div>
+            
+        </div>
+		
+		<div class="ingredient-container">
+			<div class="additional-ingredient" id="1">
+				ingredient 1
+			</div>
+		
+			<div class="additional-ingredient" id="2">
+				ingredient 2
+			</div>
+        </div>
+		
+		<div class="ingredient-container">
+			<div class="additional-ingredient" id="3">
+				ingredient 3
+			</div>
+		
+			<div class="additional-ingredient" id="4">
+				ingredient 4
+			</div>
+        </div>
+		
+		<div class="ingredient-container">
+			<div class="additional-ingredient" id="5">
+				ingredient 5
+			</div>
+		
+			<div class="additional-ingredient" id="6">
+				ingredient 6
+			</div>
+        </div>
+		
+		<div class="ingredient-container">
+			<div class="additional-ingredient" id="7">
+				ingredient 7
+			</div>
+		
+			<div class="additional-ingredient" id="8">
+				ingredient 8
+			</div>
+        </div>
+		
+		<div class="ingredient-container">
+			<div class="additional-ingredient" id="9">
+				ingredient 9
+			</div>
+		
+			<div class="additional-ingredient" id="10">
+				ingredient 10
+			</div>
+        </div>
+		
+    </div>
+	<div class="toppage">
+        <div class="item">
+            <img id="miniLogo" src="NetFoodLogoMini.png" alt="Net Food Logo">
+        </div>
+		<h3>Recipe Results</h3>
+		
+		<table class="Recipes" style="border-color: transparent;">
+		  <thead>
+			<tr id="header">
+			  <th class="recCol-1"></th>
+			  <th class="recCol-2">Name</th>
+			  <th class="recCol-3">Rating</th>
+			  <th class="recCol-4">Cook Time (Minutes)</th>
+			</tr>
+		  </thead>
+		  <tbody id="recipes">
+		  </tbody>
+		</table>
+	</div>
+</body>
+
+<script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+<script>
+	function getParams(separator){
+		searchString = document.getElementById('search').value.split(" ");
+		params = "";
+		for (var i = 0; i < searchString.length; i++){
+			params+=searchString[i]
+			params+=separator
+		}
+		return params.slice(0,-separator.length);
+	}
+	
+	var ingredients = [];
+	var chosen_ingredients = [];
+	var used = [];
+	var url_g = "";
+	var not_yummly_ids = [];
+	var confirmedR = [];
+	var black = [];
+	$('#new_recipe').on("click", function(){ 
+		$("#home").hide("fast", function(){ $("#new-recipe").show()})
+	})
+	
+	$('#editb').on("click", function(){
+		info = $("#recipeId").text().split("; ")
+		recipeId = info[0]
+		recipeType = info[1]
+		object = {"name": document.getElementById("Rname2").value, "recipe": document.getElementById("Rrecipe2").value, "photo": document.getElementById("Rphoto2").value,"ingredients": document.getElementById("Ringredients2").value.split(",").map(item => item.trim()),"rating": document.getElementById("Rrating2").value,"time": document.getElementById("Rtime2").value}
+		
+		if (!(
+			object["name"] == "" |
+			object["Rname"] == "" |
+			object["recipe"] == "" |
+			object["ingredients"] == [] |
+			object["rating"] == "" |
+			object["Rtime"] == "" )
+		){
+			if(recipeType == "yummly"){
+				$.ajax({
+					type: "POST",
+					url: 'http://localhost:3000/blacklist',
+					data: {"entry": recipeId},
+					success: function(data) {
+						console.log(data);
+					}
+				})
+				
+				
+				$.ajax({
+					type: "POST",
+					url: 'http://localhost:3000/recipes',
+					data: object,
+					success: function(data) {
+						console.log(data)
+						alert(" Edited! Changes will apply on your next search!")
+					}
+				})
+			} else {
+				url_priv = 'http://localhost:3000/recipes/' + recipeId;
+				
+				$.ajax({
+					type: "PUT",
+					url: url_priv,
+					data: object,
+					success: function(data) {
+						console.log(data);
+						alert(" Edited! changes will apply on your next search!")
+					}
+				})
+			}
+		} else {
+			alert("Cannot Submit Empty Fields");
+		}
+	
+		$("#edit-recipe").hide("fast", function(){ $(".toppage").show()})
+	})
+	$('#createb').on("click", function(){
+			object = {"name": document.getElementById("Rname").value, "recipe": document.getElementById("Rrecipe").value, "photo": document.getElementById("Rphoto").value,"ingredients": document.getElementById("Ringredients").value.split(",").map(item => item.trim()),"rating": document.getElementById("Rrating").value,"time": document.getElementById("Rtime").value}
+			console.log(object)
+			
+			if (!(
+				object["name"] == "" |
+				object["Rname"] == "" |
+				object["recipe"] == "" |
+				object["ingredients"] == [] |
+				object["rating"] == "" |
+				object["Rtime"] == "" )
+			){
+			
+			$.ajax({
+				type: 'POST',
+						url: 'http://localhost:3000/recipes',
+						data: object,
+						success: function(data) {
+								console.log(data)
+								// alert('Your recipe has been created!');
+								$("#new-recipe").hide("fast", function(){ window.location.replace('http://localhost:3000/home')})
+							
+								
+						}
+					  
+					});
+					
+			}
+			else {
+				alert("Cannot Submit Empty Fields");
+			}
+	})
+	$(document).bind('keypress', function(e) {
+		if(e.keyCode==13){
+			 $('#submit').trigger('click');
+		 }
+	});
+	$("#submit").on("click", function(){ 
+		$("#home").hide("fast", function(){ 
+			$("#list").text(" Ingredient list:  "+getParams(", "));
+			var used = document.getElementById('search').value.split(" ");
+			url_g = 'https://api.yummly.com/v1/api/recipes?_app_id=3b1e348e&_app_key=3beb94e10149f5bbfaf7951cff96b187&q='+getParams("+")
+			$.ajax({
+				type: 'GET',
+				dataType: 'jsonp',
+				url: url_g,
+				success: function(data) {
+					$.each(data.matches,function(i,item){
+							$.each(item.ingredients, function(i, ing){
+								if (!ingredients.includes(ing)){
+									ingredients.push(ing);
+								}
+							})
+						})
+					for (var i = 0; i < ingredients.length; i++){
+						$("#" + i).text(ingredients[i]);
+					}
+					$(".container").show()
+				}
+			})
+		});
+	});
+	
+	
+	$("#search2").on("click", function() {
+		$(".container").hide("fast", function() {
+		$.ajax({
+		type: 'GET',
+				url: 'http://localhost:3000/recipes',
+				//data: object,
+				success: function(data) {
+						confirmedR = [];
+						
+						
+						for (r in data){
+						
+							
+							var flag = 1
+						
+							for (d in chosen_ingredients){
+								
+									if (data[r]["ingredients"].indexOf(chosen_ingredients[d]) == -1){
+										flag = 0;
+									}
+									
+							}
+							if (flag == 1){
+								confirmedR.push(data[r])
+							}
+						}
+						
+						//console.log(data)
+						//console.log(confirmedR)
+						
+						
+						for(r in confirmedR){
+				
+						console.log(confirmedR[r]);
+			
+						stars = "<img src='./star-orange-md.png' alt='HTML5 Icon' width='10%' height='5%'>".repeat(Number(confirmedR[r].rating));
+						$('#recipes').append("<tr><td class='foodimage'><img src='" + confirmedR[r].photo + "' alt='HTML5 Icon' style='height:60;'></td><td><a href='" +confirmedR[r].recipe
+								+"' style='color:white'>"+confirmedR[r].name+"</a></td><td style='width:15%'>" + stars + "</td><td>" + 
+								confirmedR[r].time + "</td><td style='width:30;'><input type='image' id='edit' src='edit.png' alt='Edit'><input type='image' id='delete' src='delete.png' alt='Delete'><div style='display:none;'>" +
+								confirmedR[r].name + "; " + confirmedR[r].recipe + "; " + confirmedR[r].photo + "; " + confirmedR[r].rating + "; " +
+								confirmedR[r].time + "; " + confirmedR[r].ingredients + "; " + confirmedR[r]._id + "; private</div></td></tr>")
+						}
+					
+                }
+              
+            });
+
+			$.ajax({
+				type: 'GET',
+				//dataType: 'jsonp',
+				url: 'http://localhost:3000/blacklist',
+				success: function(data5) {
+
+					//console.log(data5)
+					$.each(data5,function(i,item){
+					
+					//console.log(item.entry)
+					black.push(item.entry)
+					
+
+			
+			
+                        })
+                    }
+              
+            });	
+
+			
+	
+			$.ajax({
+				type: 'GET',
+				dataType: 'jsonp',
+				url: url_g,
+				success: function(data) {
+					$.each(data.matches,function(i,item){
+					var urlr
+					$.ajax({
+					
+						type: 'GET',
+						dataType: 'jsonp',
+						url: 'http://api.yummly.com/v1/api/recipe/'+item.id+'?_app_id=3b1e348e&_app_key=3beb94e10149f5bbfaf7951cff96b187&',
+						success: function(data2) {
+
+							if($.inArray(item.id,black) !== -1){
+
+							}
+							else{
+								urlr = data2.source.sourceRecipeUrl
+								stars = "<img src='./star-orange-md.png' alt='HTML5 Icon' width='10%' height='5%'>".repeat(Number(item.rating));
+								$('#recipes').append("<tr><td class='foodimage'><img src='" + item.smallImageUrls + "' alt='HTML5 Icon' ></td><td><a href='" +urlr 
+								+"' style='color:white'>"+item.recipeName+"</a></td><td style='width:15%'>" + stars + "</td><td>" + 
+								parseInt(item.totalTimeInSeconds, 10) / parseInt(60, 10) + 
+								"</td><td style='width:30;'><input type='image' src='edit.png' id='edit' /><input type='image' src='delete.png' id='delete' /><div style='display:none;'>" +
+								item.recipeName + "; " + urlr + "; " + item.smallImageUrls + "; " + item.rating + "; " +
+								parseInt(item.totalTimeInSeconds, 10) / parseInt(60, 10) + "; " + item.ingredients + "; " + item.id + "; yummly</div></td></tr>")}
+					}})
+                        })
+                    }
+              
+            });
+		
+			$(".toppage").show()
+			$(".recipes").show()
+		})
+	})
+	
+	$('#recipes').on("click", "#edit", function(){
+		info = $(this).next().next().text()
+		$(".toppage").hide("fast", function(){
+			defaults = info.split("; ")
+			$("#Rname2").val(defaults[0])
+			$("#Rrecipe2").val(defaults[1])
+			$("#Rphoto2").val(defaults[2])
+			$("#Rrating2").val(defaults[3])
+			$("#Rtime2").val(defaults[4])
+			$("#Ringredients2").val(defaults[5])
+			$("#recipeId").text(defaults[6] + "; " + defaults[7])
+			$("#edit-recipe").show()})
+	})
+	
+
+	$('#logout').on("click", "#logout", function(){
+			$.ajax({
+				type: "GET",
+				url: 'http://localhost:3000/logout',
+				success: function(data) {
+					window.location.replace('http://localhost:3000')
+				}
+			})
+	})
+
+	$('#recipes').on("click", "#delete", function(){
+		info = $(this).next().text().split("; ")
+		recipeId = info[6]
+		recipeType = info[7]
+		
+		if(recipeType == "yummly"){
+			$.ajax({
+				type: "POST",
+				url: 'http://localhost:3000/blacklist',
+				data: {"entry": recipeId},
+				success: function(data) {
+					alert(info[0] + " deleted! You will not see this recipe on your next search!")
+					console.log(data);
+				}
+			})
+		} else {
+			url_priv = 'http://localhost:3000/recipes/' + recipeId;
+			
+			$.ajax({
+				type: "DELETE",
+				url: url_priv,
+				data: recipeId,
+				success: function(data) {
+					alert(info[0] + " deleted! You will not see this recipe on your next search!")
+					console.log(data);
+				}
+			})
+		}
+	})
+	$(".additional-ingredient").on("click", function (){
+		if ($(this).text() != ""){
+			$("#list").text($("#list").text() + ", " + $(this).text());
+			url_g = url_g.substring(0, url_g.indexOf("&q=") +3)
+						+ $(this).text() + "+"
+						+ url_g.substring(url_g.indexOf("&q=") + 3)
+						
+			chosen_ingredients.push($(this).text());
+						
+			used.push($(this).text())
+			ingredients = [];
+			for (var i = 1; i < 11; i++) {
+				$("#" + i).text("")
+				$("#" + i).hide()
+			}
+			$("#1").show().text("Loading...")
+			$.ajax({
+				type: 'GET',
+				dataType: 'jsonp',
+				url: url_g,
+				success: function(data) {
+					$.each(data.matches,function(i,item){
+						$.each(item.ingredients, function(i, ing){
+							if (!ingredients.includes(ing) && !used.includes(ing)){
+								ingredients.push(ing);
+							}
+						})
+					})
+					for (var i = 0; i < ingredients.length; i++){
+						$("#" + i).text(ingredients[i]);
+						$("#" + i).show();
+					}
+				}
+			})
+		}
+	})
+	
+</script>
+</html>
